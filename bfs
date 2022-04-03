@@ -1,0 +1,78 @@
+fun main(args: Array<String>) {
+    //vertices or nodes array
+
+    //Driver Code
+    bfs(
+        5, 3, arrayOf(
+            arrayOf(2, 3),
+        ), 2
+    ).let {
+        print("Shortest Path: ${
+            it.joinToString(separator = ",") {
+                it.toString()
+            }
+        }")
+    }
+}
+
+
+
+fun bfs(n: Int, m: Int, edges: Array<Array<Int>>, s: Int): Array<Int> {
+    val source = s - 1
+    val preNodes = Array(n) { -1 }
+    val visited = Array(n) { false }
+
+    val queue = ArrayDeque<Int>()
+    val matrix = createAdjencentMatrix(n, m, edges)
+    val resultArray = mutableListOf<Int>()
+    queue.add(source)
+
+    while (queue.isNotEmpty()) {
+        val currentNode = queue.removeFirst()
+        visited[currentNode] = true
+        for (i in matrix.indices) {
+            val neighborNode = matrix[currentNode][i]
+            if (neighborNode != 0 && !visited[i]) {
+                queue.add(i)
+                visited[i] = true
+                preNodes[i] = currentNode
+            }
+
+        }
+    }
+    print("pre node ${preNodes.toList()}")
+
+
+    for (i in 0..n - 1) {
+        if (i != source) {
+            var count = 0
+            var endOfNode = i
+            while (preNodes[endOfNode] != -1) {
+                count++
+                endOfNode = preNodes[endOfNode]
+            }
+            if (count == 0) {
+                resultArray.add(-1)
+            }else {
+                resultArray.add(6 * count)
+            }
+        }
+    }
+    return resultArray.toTypedArray()
+}
+
+fun createAdjencentMatrix(n: Int, m: Int, edges: Array<Array<Int>>): Array<Array<Int>> {
+    val adjencentMatrix = Array(n) { Array(n) { 0 } }
+    for (i in 0 until m) {
+        adjencentMatrix[edges[i][0] - 1][edges[i][1] - 1] = 1
+        adjencentMatrix[edges[i][1] - 1][edges[i][0] - 1] = 1
+    }
+    return adjencentMatrix
+    /*return arrayOf(
+        arrayOf(0, 1, 0, 0, 0),
+        arrayOf(1, 0, 1, 0, 1),
+        arrayOf(0, 1, 0, 1, 1),
+        arrayOf(0, 0, 1, 0, 1),
+        arrayOf(0, 1, 0, 1, 0)
+    )*/
+}
